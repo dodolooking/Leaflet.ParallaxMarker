@@ -1,43 +1,27 @@
 L.Marker.Parallax = L.Marker.extend({
-
     _initIcon: function () {
         L.Marker.prototype._initIcon.call(this);
         var anchor = this.options.icon.options.iconAnchor ? L.point(this.options.icon.options.iconAnchor) : L.point([0,0]);
         this.options.icon._originalOffset = L.point(-anchor.x, -anchor.y);
-
     },
+
     onAdd: function (e) {
         L.Marker.prototype.onAdd.call(this, e);
-
         this._map.on('move', this._onMapMove, this);
-        this._map.on('zoomstart', this._onZoomStart, this);
-
         this._onMapMove();
     },
-
+    
     onRemove: function (e) {
-
         this._map.off('move', this._onMapMove, this);
         L.Marker.prototype.onRemove.call(this, e);
-
     },
 
-    _onMapMove : function(e){
+    _onMapMove : function(){
         var offsets = this._calculateOffsetFromOrigin();
 
         if(this._icon){
             this._updateIconOffset(offsets.centerOffset);
         }
-    },
-
-    _onZoomStart : function(e){
-        var tempLatLng = this._calcLatLngFromOffset();
-        var origLatLng = this.getLatLng();
-        var origParallaxZoffset = this.options.parallaxZoffset;
-        this.options.parallaxZoffset = 0;
-        this.setLatLng(tempLatLng);
-
-        map.once('zoomend', function(){ console.log('@ zoomend', tempLatLng, origLatLng); this.options.parallaxZoffset = origParallaxZoffset; this.setLatLng(origLatLng); this._onMapMove(); }, this);
     },
 
     _calcLatLngFromOffset: function(){
@@ -47,15 +31,15 @@ L.Marker.Parallax = L.Marker.extend({
         var containerPoint = offsets.containerPoint.add(parallax);
         var markerLatLng = this._map.containerPointToLatLng(containerPoint);
 
-        console.log('@ containerPoint: ', containerPoint);
+        // console.log('@ containerPoint: ', containerPoint);
+        // console.log('@ got markerLatLng', markerLatLng);
 
-        console.log('@ got markerLatLng', markerLatLng);
         return markerLatLng;
     },
 
     _updateIconOffset: function(offset){
 
-        if(!offset || ! this._icon){ return };
+        if(!offset || ! this._icon){ return; }
 
         var parallax = this._calculateParallaxFromOffset(offset);
         var originalOffset = this.options.icon._originalOffset;
@@ -70,7 +54,7 @@ L.Marker.Parallax = L.Marker.extend({
 
     //Find how much from the center of the map the marker is currently located
     _calculateOffsetFromOrigin: function(){
-        if(!this._map){ return; };
+        if(!this._map){ return; }
 
         var latlng = this.getLatLng();
         var markerPoint = this._map.latLngToContainerPoint(latlng);
