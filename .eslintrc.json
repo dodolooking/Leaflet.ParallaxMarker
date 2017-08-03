@@ -13,7 +13,6 @@
         "no-unused-vars": "warn",
         "constructor-super": "warn",
         "valid-typeof": "warn",
-        // "indent":"off"
         "no-console": "warn",
         "semi": "warn"
     }
